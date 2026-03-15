@@ -54,6 +54,8 @@ solar_flare_prediction/
   - exploratory analysis notebook with outputs
 - `notebooks/solar_flare_prediction_stage2_modeling.ipynb`
   - baseline machine-learning notebook with saved results
+- `notebooks/solar_flare_prediction_stage3_forecasting_design.ipynb`
+  - forecasting-design notebook with time-aware features and chronological splitting
 
 ## Features Used
 
@@ -141,12 +143,24 @@ The second notebook adds a first machine-learning step using:
 
 The goal here is to establish whether the SHARP magnetic parameters contain predictive signal for `flare_next_24h`, not to claim a final operational forecast model.
 
+## Forecasting Design Stage
+
+The third notebook strengthens the scientific setup before any serious ML stage by adding:
+
+- temporal features such as snapshot-to-snapshot change
+- rolling means and rolling standard deviations within each active region
+- a stronger-flare label for `M` and `X` class events
+- a chronological train/test split instead of a random split
+
+This phase is meant to improve the realism of the prediction problem itself.
+
 ## Next Stage
 
 Natural extensions after this baseline are:
 
 - expand the dataset to a longer historical interval
-- use temporal validation rather than a simple random split
-- tune model hyperparameters
-- compare against more advanced models
+- use longer-term temporal validation across broader date ranges
+- improve physically motivated feature engineering
+- compare event definitions and forecast windows
+- only then move into a fuller machine-learning stage
 - study feature stability across solar cycles
