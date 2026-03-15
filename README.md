@@ -51,7 +51,9 @@ solar_flare_prediction/
   - Pearson correlations
   - mutual information
 - `notebooks/solar_flare_prediction_stage1.ipynb`
-  - main exploratory notebook with outputs
+  - exploratory analysis notebook with outputs
+- `notebooks/solar_flare_prediction_stage2_modeling.ipynb`
+  - baseline machine-learning notebook with saved results
 
 ## Features Used
 
@@ -129,11 +131,22 @@ Two practical preprocessing issues are handled in the code:
 - SHARP region identifiers can appear in a five-digit format such as `14366`, while NOAA flare reports may list the same region as `4366`
 - SHARP rows can contain multiple NOAA region IDs, so these rows are expanded before matching to flare events
 
-## Current Stage
+## Baseline Modeling Stage
 
-This repository is intentionally focused on exploratory analysis and label creation. The next stage would be to:
+The second notebook adds a first machine-learning step using:
 
-- select features
-- split training and test sets
-- train baseline machine-learning models
-- evaluate prediction skill
+- logistic regression
+- decision tree
+- random forest
+
+The goal here is to establish whether the SHARP magnetic parameters contain predictive signal for `flare_next_24h`, not to claim a final operational forecast model.
+
+## Next Stage
+
+Natural extensions after this baseline are:
+
+- expand the dataset to a longer historical interval
+- use temporal validation rather than a simple random split
+- tune model hyperparameters
+- compare against more advanced models
+- study feature stability across solar cycles
