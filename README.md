@@ -1,6 +1,10 @@
 # Solar Flare Prediction Using Solar Active Region Data
 
-This project is the first stage of a scientific data-analysis workflow for solar flare prediction. It focuses on downloading, cleaning, aligning, and exploring solar flare observations together with solar active-region physical parameters before moving to machine learning.
+## Summary
+
+This project studies whether physical properties of solar active regions can be used to predict whether a solar flare will occur in the next 24 hours. The motivation is that solar flares affect space weather, which matters for satellites, communications, navigation, and space operations. The work is organized in phases: download NOAA flare-event reports and SHARP magnetic data, clean and align the datasets by active region and time, create forecasting labels, explore the physical trends with plots and statistics, improve the forecasting setup with time-aware features and chronological splits, and finally apply machine-learning models to test whether these solar magnetic features contain usable predictive signal.
+
+This project is a phased scientific data-analysis workflow for solar flare prediction, starting from data acquisition and exploratory analysis and ending with a final machine-learning benchmark.
 
 ## Project Goal
 
@@ -56,6 +60,8 @@ solar_flare_prediction/
   - baseline machine-learning notebook with saved results
 - `notebooks/solar_flare_prediction_stage3_forecasting_design.ipynb`
   - forecasting-design notebook with time-aware features and chronological splitting
+- `notebooks/solar_flare_prediction_stage4_final_ml.ipynb`
+  - final machine-learning notebook with tuned models and held-out chronological evaluation
 
 ## Features Used
 
@@ -154,6 +160,18 @@ The third notebook strengthens the scientific setup before any serious ML stage 
 
 This phase is meant to improve the realism of the prediction problem itself.
 
+## Final ML Stage
+
+The final notebook applies machine learning to the forecasting dataset by:
+
+- combining the original SHARP features with temporal forecasting features
+- training several candidate classifiers
+- tuning models using only the earlier training period
+- evaluating the final models on a later held-out period
+- interpreting the best model with feature-importance analysis
+
+This is the final benchmark stage of the project.
+
 ## Next Stage
 
 Natural extensions after this baseline are:
@@ -162,5 +180,5 @@ Natural extensions after this baseline are:
 - use longer-term temporal validation across broader date ranges
 - improve physically motivated feature engineering
 - compare event definitions and forecast windows
-- only then move into a fuller machine-learning stage
+- test stronger models on a larger dataset
 - study feature stability across solar cycles
