@@ -2,70 +2,80 @@
 
 ## Summary
 
-This project studies whether physical properties of solar active regions can be used to predict whether a solar flare will occur in the next 24 hours. The motivation is that solar flares affect space weather, which matters for satellites, communications, navigation, and space operations. The work is organized in phases: download NOAA flare-event reports and SHARP magnetic data, clean and align the datasets by active region and time, create forecasting labels, explore the physical trends with plots and statistics, improve the forecasting setup with time-aware features and chronological splits, and finally apply machine-learning models to test whether these solar magnetic features contain usable predictive signal.
+This project investigates whether physical properties of solar active regions can be used to predict if a solar flare will occur within the next 24 hours. The motivation is space weather: solar flares can disrupt satellites, communications, navigation systems, and human activity in space. The workflow is built in phases, beginning with NOAA flare-event reports and SHARP magnetic-field data, then cleaning and aligning the datasets, creating forecasting labels, exploring physical trends statistically, improving the forecasting design with time-aware features, and finally applying machine-learning models to test whether these solar magnetic signals contain useful predictive information.
 
-This project is a phased scientific data-analysis workflow for solar flare prediction, starting from data acquisition and exploratory analysis and ending with a final machine-learning benchmark.
+## Why It Matters
 
-## Project Goal
+Solar flare prediction is important for:
 
-The objective is to build a clean exploratory pipeline for:
+- satellite operations
+- space mission planning
+- radio communication reliability
+- GPS and navigation resilience
+- broader space-weather forecasting
 
-- loading NOAA solar flare event data
-- loading SHARP active-region parameters
-- matching flare events to active regions
-- creating a binary `flare_next_24h` target
-- generating visual and statistical summaries
+## Project Highlights
+
+- Uses real NOAA SWPC flare-event reports and JSOC SHARP active-region parameters
+- Builds a full pipeline from raw data download to final ML benchmarking
+- Handles real solar-data alignment issues, including region-ID normalization across datasets
+- Uses physically meaningful magnetic features rather than abstract synthetic data
+- Improves the project in clear stages instead of jumping directly to ML
+
+## Project Phases
+
+### Phase 1: Data and Exploration
+
+- Download flare-event reports and SHARP parameters
+- Clean timestamps, missing values, and active-region IDs
+- Create the binary target `flare_next_24h`
+- Perform exploratory data analysis and statistics
+
+Main notebook:
+- `notebooks/solar_flare_prediction_stage1.ipynb`
+
+### Phase 2: Baseline Prediction Setup
+
+- Organize the labeled dataset into a prediction-ready feature table
+- Compare simple baseline models
+- Produce first performance comparisons
+
+Main notebook:
+- `notebooks/solar_flare_prediction_stage2_modeling.ipynb`
+
+### Phase 3: Forecasting Design Improvements
+
+- Add time-aware features such as change, rolling mean, and rolling variability
+- Add a stronger-flare label for `M` and `X` class events
+- Use chronological splitting instead of a random split
+
+Main notebook:
+- `notebooks/solar_flare_prediction_stage3_forecasting_design.ipynb`
+
+### Phase 4: Final ML Benchmark
+
+- Train and tune multiple models on the forecasting dataset
+- Evaluate models on a later held-out time period
+- Compare final performance with precision-recall and ROC analysis
+- Interpret the strongest model using feature-importance analysis
+
+Main notebook:
+- `notebooks/solar_flare_prediction_stage4_final_ml.ipynb`
 
 ## Data Sources
 
 - NOAA SWPC archived daily solar event reports
-  - flare event timing
+  - flare timing
   - flare class
   - NOAA active region number
 - JSOC SHARP parameter data
-  - magnetic flux (`USFLUX`)
-  - active region area (`AREA_ACR`)
-  - current helicity and related magnetic complexity features
+  - magnetic flux
+  - active-region area
+  - current helicity and related magnetic-complexity measures
 
-## Folder Structure
+## Main Physical Features
 
-```text
-solar_flare_prediction/
-    data/
-    figures/
-    notebooks/
-    src/
-    requirements.txt
-    README.md
-```
-
-## Main Files
-
-- `src/data_download.py`
-  - downloads NOAA flare reports
-  - downloads SHARP parameter tables
-- `src/preprocessing.py`
-  - loads datasets
-  - cleans timestamps and missing values
-  - normalizes and aligns active region IDs
-  - creates `flare_next_24h`
-- `src/exploration.py`
-  - dataset summary
-  - plots
-  - Pearson correlations
-  - mutual information
-- `notebooks/solar_flare_prediction_stage1.ipynb`
-  - exploratory analysis notebook with outputs
-- `notebooks/solar_flare_prediction_stage2_modeling.ipynb`
-  - baseline machine-learning notebook with saved results
-- `notebooks/solar_flare_prediction_stage3_forecasting_design.ipynb`
-  - forecasting-design notebook with time-aware features and chronological splitting
-- `notebooks/solar_flare_prediction_stage4_final_ml.ipynb`
-  - final machine-learning notebook with tuned models and held-out chronological evaluation
-
-## Features Used
-
-The exploratory stage currently works with SHARP-style physical parameters such as:
+Examples of features used in the project:
 
 - `USFLUX`
 - `AREA_ACR`
@@ -79,9 +89,9 @@ The exploratory stage currently works with SHARP-style physical parameters such 
 - `MEANGBZ`
 - `MEANGBH`
 
-## Label Definition
+## Labels
 
-The binary label is defined as:
+Primary forecasting label:
 
 ```text
 flare_next_24h = 1
@@ -89,96 +99,107 @@ if a flare occurs in the same active region within the next 24 hours
 otherwise 0
 ```
 
-## Visualizations Produced
+Phase 3 also adds:
 
-The pipeline generates:
+```text
+strong_flare_next_24h = 1
+if an M-class or X-class flare occurs within the next 24 hours
+otherwise 0
+```
 
-- histogram of flare classes
-- distribution of magnetic field strength
-- distribution of active region area
-- correlation heatmap of physical parameters
-- scatter plot of magnetic flux vs flare occurrence
+## Current Final-Phase Result
 
-Saved figures are written to the `figures/` folder.
+On the current downloaded sample, the best final model is a random forest using time-aware magnetic features and chronological evaluation.
 
-## Statistical Analysis
+- Best model: `Random Forest`
+- Best parameters: `max_depth=4`, `n_estimators=200`
+- Average precision: about `0.700`
+- ROC AUC: about `0.811`
+- F1 score: about `0.581`
 
-The project computes:
+These results should be interpreted as a compact scientific benchmark, not as a finished operational flare-warning system.
 
-- Pearson correlation between numeric features and `flare_next_24h`
-- mutual information between physical parameters and `flare_next_24h`
+## Project Structure
+
+```text
+solar_flare_prediction/
+    data/
+    figures/
+    notebooks/
+    src/
+    requirements.txt
+    README.md
+```
+
+## Key Files
+
+- `src/data_download.py`
+  - downloads NOAA and SHARP data
+- `src/preprocessing.py`
+  - loads, cleans, aligns, and labels the datasets
+- `src/exploration.py`
+  - exploratory plots and statistics
+- `src/modeling.py`
+  - baseline prediction utilities
+- `src/forecasting.py`
+  - forecasting-design improvements and time-aware features
+- `src/final_ml.py`
+  - final ML training, tuning, evaluation, and interpretation
+
+## Practical Data Notes
+
+The code handles two real solar-data issues:
+
+- SHARP may store NOAA active-region identifiers in five-digit form such as `14366`, while NOAA flare reports list the same region as `4366`
+- SHARP rows can contain multiple NOAA region IDs, so those rows are expanded before flare matching
+
+## Visual and Statistical Outputs
+
+The project generates:
+
+- flare-class histograms
+- magnetic-feature distributions
+- correlation heatmaps
+- magnetic-flux vs flare-occurrence scatter plots
+- model-comparison plots
+- precision-recall and ROC curves
+- feature-importance plots
+
+Saved figures are written to `figures/`.
 
 ## Setup
 
-Install dependencies:
+Install dependencies with:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Running the Project
+## How to Run
 
-The main workflow is in the notebook:
+Open the notebooks in VS Code or Jupyter and run them in order:
 
-```text
-notebooks/solar_flare_prediction_stage1.ipynb
-```
+1. `notebooks/solar_flare_prediction_stage1.ipynb`
+2. `notebooks/solar_flare_prediction_stage2_modeling.ipynb`
+3. `notebooks/solar_flare_prediction_stage3_forecasting_design.ipynb`
+4. `notebooks/solar_flare_prediction_stage4_final_ml.ipynb`
 
-Open the notebook in VS Code or Jupyter and run the cells. The notebook can:
+## What This Project Demonstrates
 
-- download a compact NOAA + SHARP dataset
-- load and clean the data
-- create the flare label
-- display summary tables
-- generate figures
+This project demonstrates:
 
-## Notes on Data Alignment
+- scientific data cleaning and integration
+- physics-motivated feature analysis
+- forecasting-aware dataset design
+- model evaluation under chronological testing
+- clear staged project development from raw data to final benchmark
 
-Two practical preprocessing issues are handled in the code:
+## Future Improvements
 
-- SHARP region identifiers can appear in a five-digit format such as `14366`, while NOAA flare reports may list the same region as `4366`
-- SHARP rows can contain multiple NOAA region IDs, so these rows are expanded before matching to flare events
+Natural next extensions would be:
 
-## Baseline Modeling Stage
-
-The second notebook adds a first machine-learning step using:
-
-- logistic regression
-- decision tree
-- random forest
-
-The goal here is to establish whether the SHARP magnetic parameters contain predictive signal for `flare_next_24h`, not to claim a final operational forecast model.
-
-## Forecasting Design Stage
-
-The third notebook strengthens the scientific setup before any serious ML stage by adding:
-
-- temporal features such as snapshot-to-snapshot change
-- rolling means and rolling standard deviations within each active region
-- a stronger-flare label for `M` and `X` class events
-- a chronological train/test split instead of a random split
-
-This phase is meant to improve the realism of the prediction problem itself.
-
-## Final ML Stage
-
-The final notebook applies machine learning to the forecasting dataset by:
-
-- combining the original SHARP features with temporal forecasting features
-- training several candidate classifiers
-- tuning models using only the earlier training period
-- evaluating the final models on a later held-out period
-- interpreting the best model with feature-importance analysis
-
-This is the final benchmark stage of the project.
-
-## Next Stage
-
-Natural extensions after this baseline are:
-
-- expand the dataset to a longer historical interval
-- use longer-term temporal validation across broader date ranges
-- improve physically motivated feature engineering
-- compare event definitions and forecast windows
-- test stronger models on a larger dataset
-- study feature stability across solar cycles
+- use a much longer historical dataset
+- evaluate across multiple solar-cycle periods
+- compare different forecast windows
+- focus specifically on stronger flares
+- test stronger models on larger datasets
